@@ -1,0 +1,46 @@
+:root {
+  /* Core Brand & Architecture Palette (Brita Professional Slate) */
+  --bg-app: #080c14;
+  --bg-gradient: radial-gradient(120% 80% at 50% -10%, #0e1b30 0%, #080c14 65%);
+  
+  /* Precision Matte Panels */
+  --surface-panel: rgba(15, 23, 38, 0.72);
+  --surface-panel-elevated: rgba(22, 33, 54, 0.85);
+  --surface-panel-subtle: rgba(255, 255, 255, 0.025);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-border-subtle: rgba(255, 255, 255, 0.04);
+  --surface-border-focus: rgba(0, 163, 224, 0.45);
+  
+  /* Authentic Brita Hydro Blue & Tonal Accents */
+  --brita-blue: #0099e5;
+  --brita-blue-dark: #0077b6;
+  --brita-blue-soft: rgba(0, 153, 229, 0.12);
+  --brita-blue-border: rgba(0, 153, 229, 0.3);
+  
+  --status-healthy: #10b981;
+  --status-healthy-soft: rgba(16, 185, 129, 0.12);
+  --status-warning: #f59e0b;
+  --status-warning-soft: rgba(245, 158, 11, 0.12);
+  --status-danger: #ef4444;
+  --status-danger-soft: rgba(239, 68, 68, 0.12);
+
+  /* Typography Colors */
+  --text-pure: #ffffff;
+  --text-high: #e2e8f0;
+  --text-mid: #94a3b8;
+  --text-low: #64748b;
+  --text-subtle: #475569;
+  
+  /* Geometries & Elevation */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  
+  --shadow-card: 0 4px 24px -1px rgba(0, 0, 0, 0.4), 0 2px 8px -2px rgba(0, 0, 0, 0.2);
+  --shadow-elevated: 0 12px 36px -4px rgba(0, 0, 0, 0.55);
+  
+  --backdrop-blur: blur(20px);
+}

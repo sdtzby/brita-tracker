@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>BRITA Hydration & Filter Tracker</title>
+    <meta name="description" content="BRITA Style Essential XL 150L su filtresi ve kişisel hidrasyon takip asistanı." />
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#080c14" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="BRITA Tracker" />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./src/styles/reset.css" />
+    <link rel="stylesheet" href="./src/styles/theme.css" />
+    <link rel="stylesheet" href="./src/styles/app.css" />
+  </head>
+  <body>
+    <div class="app-viewport">
+      <div class="mobile-container">
+
+        <!-- PWA Install Notice -->
+        <div id="pwaBanner" class="pwa-banner">
+          <div class="pwa-banner-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <span>Ana ekrana yükle</span>
+          </div>
+          <button id="pwaInstallBtn" class="pwa-install-btn">Yükle</button>
+        </div>
+
+        <!-- AUTH SCREEN -->
+        <div id="authScreen" class="auth-wrapper" style="display: none;">
+          <div class="panel auth-panel">
+            <div class="auth-header">
+              <div class="brand-symbol">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2.5C12 2.5 5 11 5 16a7 7 0 0 0 14 0c0-5-7-13.5-7-13.5z"/>
+                  <path d="M8 15.5c.8 1 2.2 1.5 4 1.5s3.2-.5 4-1.5"/>
+                </svg>
+              </div>
+              <h2>BRITA Water Tracker</h2>
+              <p>İş Yeri 150L Filtre & Günlük Su Asistanı</p>
+            </div>
+
+            <div id="authError" class="auth-error"></div>
+
+            <form id="authForm" onsubmit="return false;">
+              <div class="form-group">
+                <label for="authEmail">E-posta</label>
+                <input type="email" id="authEmail" placeholder="ornek@sirket.com" required autocomplete="email" />
+              </div>
+
+              <div class="form-group" style="margin-top: 14px;">
+                <label for="authPassword">Şifre</label>
+                <input type="password" id="authPassword" placeholder="••••••••" required autocomplete="current-password" />
+              </div>
+
+              <button type="submit" id="authSubmitBtn" class="btn-primary" style="margin-top: 20px;">
+                Giriş Yap
+              </button>
+            </form>
+
+            <div class="auth-toggle">
+              <span id="authTogglePrompt">Hesabınız yok mu?</span>
+              <a id="authToggleBtn">Kayıt Ol</a>
+            </div>
+
+            <div style="text-align: center; margin-top: 10px;">
+              <button id="settingsFromAuthBtn" class="link-subtle">
+                Firebase & Demo Yapılandırması
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN APP -->
+        <div id="appScreen" style="display: none; flex-direction: column; gap: 14px; padding-bottom: 80px;">
+          
+          <!-- Unified Modern App Header -->
+          <header class="app-top-header">
+            <div class="greeting-box">
+              <span class="greeting-date" id="headerDate">Bugün, 2 Eylül</span>
+              <h1 class="greeting-title" id="greetingTitle">İyi çalışmalar 👋</h1>
+            </div>
+            
+            <div class="header-right-actions">
+              <!-- Filter Quick Status Badge -->
+              <button id="headerFilterPill" class="filter-mini-pill" title="Filtre Durumu">
+                <span class="pill-dot healthy"></span>
+                <span id="headerFilterRemaining">145.9 L</span>
+              </button>
+              <button id="openSettingsBtn" class="btn-icon-soft" title="Ayarlar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </button>
+            </div>
+          </header>
+
+          <!-- Location Switcher Segment (İş Yeri / Ev) -->
+          <div class="location-switcher-bar">
+            <button class="loc-pill-btn active" data-loc="work">
+              <span class="loc-emoji">🏢</span>
+              <span class="loc-title">İş Yeri</span>
+            </button>
+            <button class="loc-pill-btn" data-loc="home">
+              <span class="loc-emoji">🏠</span>
+              <span class="loc-title">Ev</span>
+            </button>
+          </div>
+
+          <!-- TAB 1: BUGÜN (TODAY / HYDRATION) -->
+          <main id="tabToday" class="tab-view active">
+            
+            <!-- Hero Filter Gauge Card (150L BRITA Tracker) -->
+            <section class="panel today-hero-card">
+              <!-- 270° Radial Arc Instrument Gauge -->
+              <div class="vessel-container">
+                <canvas id="gaugeCanvas" class="dial-canvas"></canvas>
+                <div class="vessel-overlay-stats">
+                  <span class="vessel-caption">FİLTRE KALAN</span>
+                  <div class="vessel-big-number">
+                    <span id="remainingLiters">150.0</span><small>L</small>
+                  </div>
+                  <span id="healthPill" class="health-pill healthy">
+                    <span class="pulse-dot"></span>
+                    <span id="remainingPercent">%100</span> • Filtre Aktif
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Dedicated Daily Hydration Card (Bugünkü Su Tüketimi) -->
+            <section class="panel hydration-card">
+              <div class="hydration-header">
+                <div class="hydra-title-group">
+                  <span class="hydra-label">GÜNLÜK HİDRASYON</span>
+                  <div class="hydra-intake">
+                    <strong id="todayIntakeDisplay">0.00</strong> <span style="font-size: 0.95rem; font-weight: 700; color: var(--brita-blue);">L</span>
+                    <span id="todayIntakeMlDisplay" class="hydra-ml">(0 ml)</span>
+                  </div>
+                </div>
+                <button id="toggleDailyGoalBtn" class="goal-pill-btn" title="Hedefi Değiştir">
+                  Hedef: <strong id="dailyGoalDisplay">2.00</strong> L ✎
+                </button>
+              </div>
+
+              <div class="hydra-track-container">
+                <div id="todayProgressBar" class="hydra-track-fill" style="width: 0%;"></div>
+              </div>
+
+              <div class="hydra-status-row">
+                <span id="todayStatusText" class="hydra-hint">Hedefinize başlayın! 💧</span>
+                <span id="todayPercentBadge" class="hydra-percent">%0</span>
+              </div>
+            </section>
+
+            <!-- One-Touch Dosage Section -->
+            <section class="panel quick-action-panel">
+              <div class="section-top-row">
+                <span id="actionHeadingTitle" class="action-heading">Hızlı Tüketim Ekle</span>
+                <span id="actionHeadingHint" class="action-hint">Tek dokunuşla kaydet</span>
+              </div>
+
+              <!-- Depleted Alert Banner -->
+              <div id="filterDepletedBanner" class="depleted-banner" style="display: none;">
+                <div class="banner-text">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <span>150L filtre kapasitesi doldu.</span>
+                </div>
+                <button id="bannerResetBtn" class="btn-banner-reset">Sıfırla</button>
+              </div>
+
+              <!-- Dynamic Quick Dosage Cards (Work or Home) -->
+              <div id="dosageGrid" class="dosage-grid">
+                <!-- Dynamically rendered based on active location -->
+              </div>
+
+              <!-- Custom & Undo Row -->
+              <div class="secondary-actions-bar">
+                <button id="openCustomModalBtn" class="btn-subtle-action">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>Özel Miktar</span>
+                </button>
+                <button id="undoActionBtn" class="btn-subtle-action undo">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                  <span>Son Girişi Geri Al</span>
+                </button>
+              </div>
+            </section>
+
+            <!-- Today's Intake Log -->
+            <section class="panel today-drinks-panel">
+              <div class="section-top-row">
+                <span class="action-heading">Bugünkü Yudumlar</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span id="todayDrinksCount" class="badge-count">0 kayıt</span>
+                  <button id="resetAllLogsBtn" class="btn-clear-today" title="Tüm kayıtları sıfırla">Kayıtları Sıfırla</button>
+                </div>
+              </div>
+              <div id="todayDrinksList" class="today-drinks-list">
+                <div class="empty-hint">Bugün henüz su kaydı girilmedi.</div>
+              </div>
+            </section>
+
+          </main>
+
+          <!-- TAB 2: İSTATİSTİK & GEÇMİŞ (INSIGHTS) -->
+          <main id="tabStats" class="tab-view" style="display: none;">
+            
+            <!-- Weekly Chart Card -->
+            <section class="panel chart-panel">
+              <div class="section-top-row">
+                <span class="action-heading">Haftalık Tüketim</span>
+                <span class="action-hint">Son 7 gün</span>
+              </div>
+
+              <div class="weekly-bar-chart" id="weeklyChart">
+                <!-- Dynamically generated via JS -->
+              </div>
+            </section>
+
+            <!-- 2x2 Overview Metrics -->
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <span class="metric-label">TOPLAM TÜKETİLEN</span>
+                <span class="metric-value"><strong id="statsTotalConsumed">0.0</strong> <small>L</small></span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">GÜNLÜK ORTALAMA</span>
+                <span class="metric-value"><strong id="statsDailyAvg">0.0</strong> <small>L/g</small></span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">AKTİF GÜN</span>
+                <span class="metric-value"><strong id="statsDaysUsed">1</strong> <small>gün</small></span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-label">TAHMİNİ BİTİŞ</span>
+                <span class="metric-value highlight"><strong id="statsEstimatedFinish">-</strong></span>
+              </div>
+            </div>
+
+            <!-- Full Consumption History -->
+            <section class="panel history-panel">
+              <div class="section-top-row">
+                <span class="action-heading">Tüm Kayıtlar</span>
+                <span id="logCountBadge" class="badge-count">0 kayıt</span>
+              </div>
+              <div id="historyList" class="history-list">
+                <div class="empty-history">Henüz tüketim kaydı bulunmuyor.</div>
+              </div>
+            </section>
+
+          </main>
+
+          <!-- TAB 3: BRITA FİLTRE & AYARLAR -->
+          <main id="tabFilter" class="tab-view" style="display: none;">
+            
+            <!-- Filter Health Card -->
+            <section class="panel filter-hero-card">
+              <div class="filter-card-header">
+                <div class="f-brand">
+                  <span id="filterTabTitle" class="f-title">BRITA Style Essential XL</span>
+                  <span id="filterTabLocationBadge" class="f-badge">🏢 İŞ YERİ FİLTRESİ • 150L</span>
+                </div>
+                <button id="openResetModalBtn" class="btn-reset-filter">
+                  Filtre Değişti
+                </button>
+              </div>
+
+              <div class="filter-big-stats">
+                <div class="f-stat">
+                  <span class="f-label">KALAN KAPASİTE</span>
+                  <span class="f-num" id="filterTabRemaining">150.0 <small>L</small></span>
+                </div>
+                <div class="f-stat">
+                  <span class="f-label">TÜKETİLEN</span>
+                  <span class="f-num" id="filterTabConsumed">0.0 <small>/ 150 L</small></span>
+                </div>
+              </div>
+
+              <div class="track-bar">
+                <div id="filterTabProgressBar" class="track-fill" style="width: 100%;"></div>
+              </div>
+
+              <div class="filter-details-list">
+                <div class="f-detail-row">
+                  <span>Filtre Takılma Tarihi</span>
+                  <strong id="filterStartDate">-</strong>
+                </div>
+                <div class="f-detail-row">
+                  <span>Kullanım Süresi</span>
+                  <strong id="filterDaysUsed">-</strong>
+                </div>
+                <div class="f-detail-row">
+                  <span>Günlük Ortalama Tüketim</span>
+                  <strong id="dailyAvgConsumption">-</strong>
+                </div>
+                <div class="f-detail-row">
+                  <span>Tahmini Değişim Tarihi</span>
+                  <strong id="estimatedEndDate" style="color: var(--brita-blue);">-</strong>
+                </div>
+              </div>
+            </section>
+
+            <!-- Cloud Sync & Settings Panel -->
+            <section class="panel settings-panel-card">
+              <div class="section-top-row">
+                <span class="action-heading">Bulut & Hesap</span>
+                <div id="connectionPill" class="connection-status local">
+                  <span class="dot"></span>
+                  <span id="connectionText">Lokal Demo</span>
+                </div>
+              </div>
+
+              <p class="settings-desc">
+                Verilerinizin telefonunuz ve bilgisayarınız arasında anında canlı eşitlenmesi için Firebase bulut konfigürasyonunu yönetin.
+              </p>
+
+              <div class="settings-btn-group">
+                <button id="openPwaModalBtn" class="btn-settings-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Ana Ekrana Ekle (PWA Kurulumu)</span>
+                </button>
+                <button id="openFirebaseModalBtn" class="btn-settings-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  <span>Firebase API Ayarlarını Düzenle</span>
+                </button>
+                <button id="resetAllDataFilterTabBtn" class="btn-settings-row" style="color: #f87171;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  <span>Tüm Kayıtları ve Sayacı Sıfırla</span>
+                </button>
+                <button id="logoutBtn" class="btn-settings-row logout">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  <span>Oturumu Kapat</span>
+                </button>
+              </div>
+            </section>
+
+          </main>
+
+          <!-- FLOATING APP NAVIGATION DOCK (iOS Style) -->
+          <nav class="bottom-dock">
+            <button class="dock-tab active" data-tab="tabToday">
+              <div class="dock-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2.5C12 2.5 5 11 5 16a7 7 0 0 0 14 0c0-5-7-13.5-7-13.5z"/>
+                </svg>
+              </div>
+              <span>Bugün</span>
+            </button>
+
+            <button class="dock-tab" data-tab="tabStats">
+              <div class="dock-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"/>
+                  <line x1="12" y1="20" x2="12" y2="4"/>
+                  <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+              </div>
+              <span>İstatistik</span>
+            </button>
+
+            <button class="dock-tab" data-tab="tabFilter">
+              <div class="dock-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                </svg>
+              </div>
+              <span>BRITA Filtre</span>
+            </button>
+          </nav>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL: Custom Amount -->
+    <div id="customModal" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">Özel Tüketim Girişi</h3>
+          <button class="btn-icon close-modal-btn" data-target="customModal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="stepper-box">
+          <button id="stepperMinus" class="btn-stepper">−</button>
+          <div class="stepper-readout">
+            <span id="customAmountDisplay">0.50</span><small>L</small>
+          </div>
+          <button id="stepperPlus" class="btn-stepper">+</button>
+        </div>
+
+        <input type="range" id="customSlider" class="precision-slider" min="0.05" max="5.00" step="0.05" value="0.50" />
+
+        <div class="form-group">
+          <label for="customLabelInput">Açıklama / Not (Opsiyonel)</label>
+          <input type="text" id="customLabelInput" placeholder="Örn: Çay, Kahve, Sürahi" maxlength="25" />
+        </div>
+
+        <button id="submitCustomAmountBtn" class="btn-primary">
+          Ekle (<span id="customBtnAmount">0.50</span> L)
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL: Filter Reset -->
+    <div id="resetModal" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">Yeni Filtre Başlat</h3>
+          <button class="btn-icon close-modal-btn" data-target="resetModal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <p class="modal-sub">
+          Yeni BRITA kartuşu taktığınızda sayacı 150 litreye sıfırlayın.
+        </p>
+
+        <div class="form-group">
+          <label for="resetStartDateInput">Takılma Tarihi</label>
+          <input type="date" id="resetStartDateInput" />
+        </div>
+
+        <div class="form-group">
+          <label for="resetCapacityInput">Kapasite Hedefi (Litre)</label>
+          <input type="number" id="resetCapacityInput" value="150" min="50" max="500" />
+        </div>
+
+        <div class="modal-actions-row">
+          <button class="btn-secondary close-modal-btn" data-target="resetModal">Vazgeç</button>
+          <button id="confirmResetBtn" class="btn-primary danger">Filtreyi Sıfırla (150L)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Settings & Firebase -->
+    <div id="settingsModal" class="modal-overlay">
+      <div class="modal-card" style="max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header">
+          <h3 class="modal-title">Ayarlar & Firebase</h3>
+          <button class="btn-icon close-modal-btn" data-target="settingsModal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <p class="modal-sub">
+          Firebase konsolundan alacağınız proje ayarlarını buraya girerek telefonunuzla gerçek zamanlı eşitlenmesini sağlayabilirsiniz.
+        </p>
+
+        <div class="form-group">
+          <label for="cfgApiKey">API Key</label>
+          <input type="text" id="cfgApiKey" placeholder="AIzaSy..." />
+        </div>
+
+        <div class="form-group">
+          <label for="cfgProjectId">Project ID</label>
+          <input type="text" id="cfgProjectId" placeholder="brita-pro-123" />
+        </div>
+
+        <div class="form-group">
+          <label for="cfgAuthDomain">Auth Domain</label>
+          <input type="text" id="cfgAuthDomain" placeholder="brita-pro-123.firebaseapp.com" />
+        </div>
+
+        <div class="form-group">
+          <label for="cfgAppId">App ID</label>
+          <input type="text" id="cfgAppId" placeholder="1:12345:web:abcdef" />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+          <button id="saveFirebaseSettingsBtn" class="btn-primary">
+            Yapılandırmayı Kaydet
+          </button>
+          <button id="clearFirebaseSettingsBtn" class="link-danger">
+            Yapılandırmayı Sıfırla (Lokal Moda Dön)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA INSTALL MODAL -->
+    <div id="pwaModal" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">Uygulamayı Yükle (PWA)</h3>
+          <button class="btn-icon close-modal-btn" data-target="pwaModal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <p class="modal-sub">
+          BRITA Tracker'ı tarayıcı sekmesi yerine telefonunuza veya bilgisayarınıza tam ekran bağımsız bir uygulama olarak yükleyebilirsiniz.
+        </p>
+
+        <!-- Direct Install Button (Android / Chrome / Edge) -->
+        <div id="pwaDirectInstallBox" style="margin: 12px 0 16px;">
+          <button id="pwaModalInstallBtn" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Şimdi Yükle</span>
+          </button>
+        </div>
+
+        <!-- iOS Safari Instructions -->
+        <div class="pwa-instructions-box" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: var(--radius-md); padding: 14px; font-size: 0.8rem; line-height: 1.5; color: var(--text-mid);">
+          <strong style="color: #ffffff; display: block; margin-bottom: 8px; font-size: 0.84rem;">📱 iPhone & iPad (Safari) Kurulumu:</strong>
+          <ol style="padding-left: 18px; margin: 0; display: flex; flex-direction: column; gap: 6px;">
+            <li>Safari ekranının altındaki <strong>Paylaş [ ⎋ ]</strong> simgesine dokunun.</li>
+            <li>Aşağı kaydırıp <strong>"Ana Ekrana Ekle" (Add to Home Screen)</strong> seçeneğini seçin.</li>
+            <li>Sağ üstteki <strong>"Ekle"</strong> butonuna basın. Uygulama ana ekranınıza gelecektir!</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOATING TOAST -->
+    <div id="floatingToast" class="toast-card">
+      <div class="toast-indicator"></div>
+      <span id="toastMessage">0.50 L eklendi</span>
+      <button id="toastUndoBtn" class="toast-undo">Geri Al</button>
+    </div>
+
+    <!-- Controller -->
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
