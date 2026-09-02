@@ -37,28 +37,34 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 4px 10px;
+  padding: 4px 2px 8px;
+  gap: 12px;
 }
 
 .greeting-box {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
 }
 
 .greeting-date {
-  font-size: 0.72rem;
+  font-size: 0.70rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--brita-blue);
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .greeting-title {
-  font-size: 1.35rem;
+  font-size: 1.22rem;
   font-weight: 800;
   color: var(--text-pure);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .header-right-actions {

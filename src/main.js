@@ -450,7 +450,7 @@ function updateUI(state, logs, isCloud) {
   remainingLitersEl.textContent = remaining.toFixed(1);
   remainingPercentEl.textContent = `%${percent}`;
   if (consumedLitersEl) consumedLitersEl.textContent = used.toFixed(1);
-  headerFilterRemaining.textContent = `${remaining.toFixed(1)} L`;
+  if (headerFilterRemaining) headerFilterRemaining.textContent = `${remaining.toFixed(1)} L`;
 
   if (waterGauge) {
     waterGauge.setPercent(percent);
