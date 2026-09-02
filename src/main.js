@@ -97,7 +97,6 @@ const openCustomModalBtn = document.getElementById('openCustomModalBtn');
 const openResetModalBtn = document.getElementById('openResetModalBtn');
 const openSettingsBtn = document.getElementById('openSettingsBtn');
 const openFirebaseModalBtn = document.getElementById('openFirebaseModalBtn');
-const settingsFromAuthBtn = document.getElementById('settingsFromAuthBtn');
 
 // Custom Input Elements
 const customSlider = document.getElementById('customSlider');
@@ -934,7 +933,7 @@ function loadCurrentFirebaseSettings() {
   cfgAppId.value = cfg.appId || '';
 }
 
-[openSettingsBtn, openFirebaseModalBtn, settingsFromAuthBtn].forEach(btn => {
+[openSettingsBtn, openFirebaseModalBtn].forEach(btn => {
   if (btn) {
     btn.addEventListener('click', () => {
       loadCurrentFirebaseSettings();
