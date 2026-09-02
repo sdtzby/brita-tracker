@@ -183,19 +183,29 @@ function vibrate(ms = 15) {
 }
 
 // Set Date and Time-based Greeting
-function initHeaderGreeting() {
+function initHeaderGreeting(user = currentUser) {
   const now = new Date();
   const options = { weekday: 'long', day: 'numeric', month: 'long' };
   const dateStr = now.toLocaleDateString('tr-TR', options);
   headerDate.textContent = `Bugün, ${dateStr}`;
 
+  let namePart = '';
+  if (user && user.email) {
+    const email = user.email.toLowerCase();
+    if (email.includes('cigdem')) {
+      namePart = ' Çiğdem 🌸';
+    } else if (email.includes('sedat')) {
+      namePart = ' Sedat ☕';
+    }
+  }
+
   const hour = now.getHours();
   if (hour >= 5 && hour < 12) {
-    greetingTitle.textContent = 'Günaydın ☀️';
+    greetingTitle.textContent = `Günaydın${namePart || ' ☀️'}`;
   } else if (hour >= 12 && hour < 18) {
-    greetingTitle.textContent = 'İyi çalışmalar 👋';
+    greetingTitle.textContent = `İyi çalışmalar${namePart || ' 👋'}`;
   } else {
-    greetingTitle.textContent = 'İyi akşamlar 🌙';
+    greetingTitle.textContent = `İyi akşamlar${namePart || ' 🌙'}`;
   }
 }
 initHeaderGreeting();
@@ -1013,6 +1023,34 @@ subscribeToAuth((user) => {
   if (user) {
     authScreen.style.display = 'none';
     appScreen.style.display = 'flex';
+
+    initHeaderGreeting(user);
+
+    // Otomatik Lokasyon Açılışı
+    // cigdem@sedat.com -> Ev menüsü
+    // sedat@cigdem.com -> İş Yeri menüsü
+    const email = (user.email || '').toLowerCase();
+    if (email.includes('cigdem')) {
+      currentLocation = 'home';
+    } else if (email.includes('sedat')) {
+      currentLocation = 'work';
+    }
+    setActiveLocation(currentLocation);
+
+    // Konum sekmesi butonlarını güncelle
+    locPillBtns.forEach(btn => {
+      if (btn.dataset.loc === currentLocation) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    if (filterTabLocationBadge) {
+      filterTabLocationBadge.textContent = currentLocation === 'home' ? '🏠 EV FİLTRESİ • 150L' : '🏢 İŞ YERİ FİLTRESİ • 150L';
+    }
+
+    renderDosageButtons(currentLocation);
 
     if (dataUnsubscribe) dataUnsubscribe();
     dataUnsubscribe = subscribeToData(user.uid, currentLocation, ({ state, logs, isCloud }) => {
