@@ -43,7 +43,7 @@ const authEmail = document.getElementById('authEmail');
 const authPassword = document.getElementById('authPassword');
 const authSubmitBtn = document.getElementById('authSubmitBtn');
 const authError = document.getElementById('authError');
-const logoutBtns = document.querySelectorAll('#logoutBtn, .btn-settings-row.logout');
+const logoutBtns = document.querySelectorAll('#logoutBtn, .btn-settings-row.logout, #headerLogoutBtn, #modalLogoutBtn');
 
 // Gauge & Today View Elements
 const gaugeCanvas = document.getElementById('gaugeCanvas');
@@ -425,7 +425,11 @@ authForm.addEventListener('submit', async (e) => {
 logoutBtns.forEach(btn => {
   btn.addEventListener('click', async () => {
     if (confirm('Oturumu kapatmak istediğinize emin misiniz?')) {
-      if (dataUnsubscribe) dataUnsubscribe();
+      document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+      if (dataUnsubscribe) {
+        dataUnsubscribe();
+        dataUnsubscribe = null;
+      }
       await logoutUser();
     }
   });

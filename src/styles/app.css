@@ -127,6 +127,18 @@
   color: var(--text-pure);
 }
 
+.btn-icon-soft.logout-btn-header {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.btn-icon-soft.logout-btn-header:hover {
+  background: rgba(239, 68, 68, 0.16);
+  color: #ff6b6b;
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
 /* ---------------- LOCATION SWITCHER SEGMENT ---------------- */
 .location-switcher-bar {
   display: flex;
