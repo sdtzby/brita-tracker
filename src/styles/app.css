@@ -55,7 +55,7 @@
 }
 
 .greeting-title {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: var(--text-pure);
   letter-spacing: -0.02em;
@@ -1095,9 +1095,12 @@
 }
 
 .auth-header h2 {
-  font-size: 1.35rem;
+  font-size: 1.58rem;
   font-weight: 800;
   color: var(--text-pure);
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  margin-top: 6px;
 }
 
 .auth-header p {
