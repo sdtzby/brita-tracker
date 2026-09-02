@@ -42,10 +42,6 @@ const authForm = document.getElementById('authForm');
 const authEmail = document.getElementById('authEmail');
 const authPassword = document.getElementById('authPassword');
 const authSubmitBtn = document.getElementById('authSubmitBtn');
-const authTitle = document.getElementById('authTitle');
-const authSubtitle = document.getElementById('authSubtitle');
-const authTogglePrompt = document.getElementById('authTogglePrompt');
-const authToggleBtn = document.getElementById('authToggleBtn');
 const authError = document.getElementById('authError');
 const logoutBtns = document.querySelectorAll('#logoutBtn, .btn-settings-row.logout');
 
@@ -385,20 +381,6 @@ function clearAuthError() {
   authError.classList.remove('visible');
 }
 
-authToggleBtn.addEventListener('click', () => {
-  isRegisterMode = !isRegisterMode;
-  clearAuthError();
-  if (isRegisterMode) {
-    authSubmitBtn.textContent = 'Kayıt Ol ve Başla';
-    authTogglePrompt.textContent = 'Zaten hesabınız var mı?';
-    authToggleBtn.textContent = 'Giriş Yap';
-  } else {
-    authSubmitBtn.textContent = 'Giriş Yap';
-    authTogglePrompt.textContent = 'Hesabınız yok mu?';
-    authToggleBtn.textContent = 'Kayıt Ol';
-  }
-});
-
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   clearAuthError();
@@ -414,25 +396,19 @@ authForm.addEventListener('submit', async (e) => {
   authSubmitBtn.textContent = 'Giriş yapılıyor...';
 
   try {
-    if (isRegisterMode) {
-      await registerUser(email, password);
-    } else {
-      await loginUser(email, password);
-    }
+    await loginUser(email, password);
   } catch (err) {
     console.error("Auth hatası:", err);
     let msg = err.message || 'Giriş yapılamadı.';
     if (msg.includes('auth/invalid-credential') || msg.includes('auth/user-not-found') || msg.includes('auth/wrong-password')) {
       msg = 'E-posta veya şifre hatalı.';
-    } else if (msg.includes('auth/email-already-in-use')) {
-      msg = 'Bu e-posta adresi zaten kayıtlı. Lütfen giriş yapın.';
     } else if (msg.includes('auth/weak-password')) {
       msg = 'Şifreniz en az 6 karakter olmalıdır.';
     }
     showAuthError(msg);
   } finally {
     authSubmitBtn.disabled = false;
-    authSubmitBtn.textContent = isRegisterMode ? 'Kayıt Ol ve Başla' : 'Giriş Yap';
+    authSubmitBtn.textContent = 'Giriş Yap';
   }
 });
 
