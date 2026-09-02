@@ -27,6 +27,7 @@ const headerFilterRemaining = document.getElementById('headerFilterRemaining');
 const openFilterTabFromToday = document.getElementById('openFilterTabFromToday');
 
 // Location Switcher Elements
+const locationSwitcherBar = document.getElementById('locationSwitcherBar');
 const locPillBtns = document.querySelectorAll('.loc-pill-btn');
 const dosageGrid = document.getElementById('dosageGrid');
 const actionHeadingTitle = document.getElementById('actionHeadingTitle');
@@ -1030,13 +1031,17 @@ subscribeToAuth((user) => {
 
     initHeaderGreeting(user);
 
-    // Otomatik Lokasyon Açılışı
-    // cigdem@sedat.com -> Ev menüsü
-    // sedat@cigdem.com -> İş Yeri menüsü
+    // Yetkilendirme & Menü Görünürlüğü
+    // cigdem@sedat.com -> Yalnızca Ev'i görür (İş Yeri alanı tamamen gizlenir)
+    // sedat@cigdem.com -> Hem İş Yeri hem Ev'i görür ve geçiş yapabilir
     const email = (user.email || '').toLowerCase();
-    if (email.includes('cigdem')) {
+    const isCigdem = email.includes('cigdem');
+
+    if (isCigdem) {
+      if (locationSwitcherBar) locationSwitcherBar.style.display = 'none';
       currentLocation = 'home';
-    } else if (email.includes('sedat')) {
+    } else {
+      if (locationSwitcherBar) locationSwitcherBar.style.display = 'flex';
       currentLocation = 'work';
     }
     setActiveLocation(currentLocation);
@@ -1051,7 +1056,11 @@ subscribeToAuth((user) => {
     });
 
     if (filterTabLocationBadge) {
-      filterTabLocationBadge.textContent = currentLocation === 'home' ? '🏠 EV FİLTRESİ • 150L' : '🏢 İŞ YERİ FİLTRESİ • 150L';
+      if (isCigdem) {
+        filterTabLocationBadge.textContent = '🏠 EV BRITA FİLTRESİ • 150L';
+      } else {
+        filterTabLocationBadge.textContent = currentLocation === 'home' ? '🏠 EV FİLTRESİ • 150L' : '🏢 İŞ YERİ FİLTRESİ • 150L';
+      }
     }
 
     renderDosageButtons(currentLocation);
