@@ -3,14 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // Varsayılan / Kayıtlı Firebase Konfigürasyonu
-// Kullanıcı isterse doğrudan buraya yapıştırabilir veya uygulama içindeki Ayarlar (Dişli) ekranından kaydedebilir.
 const DEFAULT_CONFIG = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || ""
+  apiKey: "AIzaSyCqPrCp81gupVNZ6ipTAnW8hB_bLDJZPyk",
+  authDomain: "britasu-c5222.firebaseapp.com",
+  projectId: "britasu-c5222",
+  storageBucket: "britasu-c5222.firebasestorage.app",
+  messagingSenderId: "1006982104708",
+  appId: "1:1006982104708:web:56ae6e15431fa4e836a4d1"
 };
 
 export function getStoredFirebaseConfig() {
