@@ -192,11 +192,11 @@ function initHeaderGreeting(user = currentUser) {
 
   let namePart = '';
   if (user && user.email) {
-    const email = user.email.toLowerCase();
-    if (email.includes('cigdem')) {
-      namePart = ' Çiğdem 🌸';
-    } else if (email.includes('sedat')) {
+    const email = user.email.toLowerCase().trim();
+    if (email.startsWith('sedat')) {
       namePart = ' Sedat ☕';
+    } else if (email.startsWith('cigdem')) {
+      namePart = ' Çiğdem 🌸';
     }
   }
 
@@ -1034,8 +1034,8 @@ subscribeToAuth((user) => {
     // Yetkilendirme & Menü Görünürlüğü
     // cigdem@sedat.com -> Yalnızca Ev'i görür (İş Yeri alanı tamamen gizlenir)
     // sedat@cigdem.com -> Hem İş Yeri hem Ev'i görür ve geçiş yapabilir
-    const email = (user.email || '').toLowerCase();
-    const isCigdem = email.includes('cigdem');
+    const email = (user.email || '').toLowerCase().trim();
+    const isCigdem = email.startsWith('cigdem');
 
     if (isCigdem) {
       if (locationSwitcherBar) locationSwitcherBar.style.display = 'none';
